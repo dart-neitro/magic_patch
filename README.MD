@@ -34,3 +34,41 @@ with magic_patch(start_module, datetime, datetime_mock):
     # all done! - all modules patched!!!
     ...
 ```
+
+
+
+* Example 2 *
+  A project contains a few modules that imports datetime library
+  There are different names for target object.
+  The magic_patch provides the ability to examine all available variables in each module
+
+```python
+# module 1
+from datetime import datetime
+
+...
+```
+
+```python
+# module 2
+from datetime import datetime as new_name_datetime
+
+...
+```
+
+Using magic_patch you don't need to mock each module
+
+```python
+# test
+from unittest.mock import Mock
+from magic_patch import magic_patch
+
+from datetime import datetime  # import target object
+from ... import start_module  # necessary to run imports 
+
+datetime_mock = Mock()
+
+with magic_patch(start_module, datetime, datetime_mock):
+    # all done! - all modules patched!!!
+    ...
+```
