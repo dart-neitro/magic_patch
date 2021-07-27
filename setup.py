@@ -1,6 +1,8 @@
 from setuptools import setup, find_packages
 
 
+version = '0.0.2'
+
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
@@ -10,7 +12,7 @@ description = "The magic_patch is a simple library that provides " \
 
 setup(
     name='magic_patch',
-    version='0.0.1',
+    version=version,
     description=description,
     long_description=long_description,
     long_description_content_type="text/markdown",
