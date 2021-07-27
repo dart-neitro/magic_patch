@@ -55,7 +55,7 @@ def _get_module_objects_mapping(module: ModuleType) -> List:
         # For avoiding RuntimeError: dictionary changed size during iteration
         uploaded_module_objects = tuple(module.__dict__.items())
     except AttributeError as e:
-        warn(f"Module has no __dict__: {str(e)}")
+        warn("Module has no __dict__: {}".format(str(e)))
         return
     for module_object_name, module_object in uploaded_module_objects:
         yield module_object_name, module_object
