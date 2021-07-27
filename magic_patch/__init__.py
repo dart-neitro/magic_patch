@@ -1,7 +1,8 @@
 from types import ModuleType
-from typing import Union
+from typing import Union, List
 from unittest.mock import Mock, patch
 from contextlib import contextmanager
+from warnings import warn
 
 import sys
 
@@ -14,6 +15,7 @@ def magic_patch(
         search_by_all_names: bool = False
         ) -> None:
 
+    packages = {}
     try:
         if search_by_all_names:
             packages = search_object_by_all_names_in_loaded_packages(target_object)
@@ -22,7 +24,7 @@ def magic_patch(
         setup_object(packages, mock_object)
         yield mock_object
     except Exception as e:
-        print(e)
+        raise e
     finally:
         setup_object(packages, target_object)
 
@@ -38,14 +40,29 @@ def search_object_by_name_in_loaded_packages(target_object: object, search_by_al
 
 def search_object_by_all_names_in_loaded_packages(target_object: object, search_by_all_names: bool = False):
     result = dict()
-    for name, module in sys.modules.items():
-        for module_object_name, module_object in module.__dict__.items():
+    # For avoiding RuntimeError: dictionary changed size during iteration
+    uploaded_modules = tuple(sys.modules.items())
+    for name, module in uploaded_modules:
+        for module_object_name, module_object in _get_module_objects_mapping(module):
             if module_object is target_object:
                 result[name] = module_object_name
+
     return result
+
+
+def _get_module_objects_mapping(module: ModuleType) -> List:
+    try:
+        # For avoiding RuntimeError: dictionary changed size during iteration
+        uploaded_module_objects = tuple(module.__dict__.items())
+    except AttributeError as e:
+        warn(f"Module has no __dict__: {str(e)}")
+        return
+    for module_object_name, module_object in uploaded_module_objects:
+        yield module_object_name, module_object
 
 
 def setup_object(packages, new_object):
     for module_name, target_object_name in packages.items():
         setattr(sys.modules[module_name], target_object_name, new_object)
+
 

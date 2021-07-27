@@ -3,7 +3,7 @@ from unittest.mock import Mock, call
 
 from magic_patch import magic_patch
 
-from test_case1_data.src import main
+from tests.case1_data.src import main
 from datetime import datetime
 
 
