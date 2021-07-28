@@ -21,5 +21,5 @@ class MagicPathTest(TestCase):
         self.assertEqual(actual, expected)
         self.assertEqual(datetime_mock.now.call_args_list, [call(), call(), call()])
 
-    def falling_test(self):
+    def test_falling_check(self):
         self.fail("It's ok")
